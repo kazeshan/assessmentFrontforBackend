@@ -6,7 +6,11 @@ const initState = {
   isGettingEmployees: false,
   getError: null,
   isAddingEmp: false,
-  addError: null
+  addError: null,
+  isUpdatingEmp: false,
+  updateError: null,
+  isDeleteingEmp: false,
+  deleteError: null
 };
 
 const emp = (state = initState, action) => {
@@ -47,8 +51,10 @@ const emp = (state = initState, action) => {
         ...state,
         isAddingEmp: false,
         addError: null,
-        employees : state.employees ? [action.payload, ...state.employees] : [action.payload],
-        lastupdate : moment().valueOf()
+        employees: state.employees
+          ? [action.payload, ...state.employees]
+          : [action.payload],
+        lastupdate: moment().valueOf()
       };
     }
     case "ERROR_ADD_EMP": {
@@ -58,10 +64,70 @@ const emp = (state = initState, action) => {
         addError: action.payload
       };
     }
-    case "CLEAR_ERROR_ADD_EMP": {
+    case "CLEAR_ERROR": {
       return {
         ...state,
-        addError: null
+        addError: null,
+        updateError: null,
+        deleteError: null
+      };
+    }
+    case "START_UPDATE_EMP": {
+      return {
+        ...state,
+        isUpdatingEmp: true,
+        updateError: null
+      };
+    }
+    case "UPDATE_EMP": {
+      let newEmployees = null;
+      if (state.employees) {
+        newEmployees = state.employees.map(item => {
+          if (item.id === action.payload.id) {
+            return action.payload;
+          }
+          return item;
+        });
+      }
+      return {
+        ...state,
+        isUpdatingEmp: false,
+        updateError: null,
+        employees: newEmployees,
+        lastupdate: moment().valueOf()
+      };
+    }
+    case "ERROR_UPDATE_EMP": {
+      return {
+        ...state,
+        isUpdatingEmp: false,
+        updateError: action.payload
+      };
+    }
+
+    case "START_DELETE_EMP": {
+      return {
+        ...state,
+        isDeleteingEmp: true,
+        deleteError: null
+      };
+    }
+    case "DEELTE_EMP": {
+      let newEmployees = null;
+      newEmployees = state.employees.filter(item => item.id !== action.payload);
+      return {
+        ...state,
+        isDeleteingEmp: false,
+        deleteError: null,
+        employees: newEmployees,
+        lastupdate: moment().valueOf()
+      };
+    }
+    case "ERROR_DELETE_EMP": {
+      return {
+        ...state,
+        isDeleteingEmp: false,
+        deleteError: action.payload
       };
     }
     default: {

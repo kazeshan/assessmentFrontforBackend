@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getEmployees, addEmployee, clearAddError } from "../../actions.js";
+import {
+  getEmployees,
+  addEmployee,
+  clearError,
+  updateEmployee,
+  deleteEmp
+} from "../../actions.js";
 import "./style.css";
 
 const EmployeeTable = props => {
@@ -54,7 +60,9 @@ class EmployeeDashboard extends Component {
     name: "",
     email: "",
     id: "",
-    isCreateEmployee: false
+    isCreateEmployee: false,
+    isUpdateEmployee: false,
+    isDeleteEmployee: false
   };
 
   componentDidMount() {
@@ -87,7 +95,7 @@ class EmployeeDashboard extends Component {
       isCreateEmployee: !this.state.isCreateEmployee
     });
 
-    this.props.clearAddError()
+    this.props.clearError();
   };
 
   addEmployee = () => {
@@ -98,7 +106,7 @@ class EmployeeDashboard extends Component {
     };
 
     this.props.addEmployee(payload, () => {
-      this.toggleAddEmployee()
+      this.toggleAddEmployee();
     });
   };
 
@@ -108,8 +116,48 @@ class EmployeeDashboard extends Component {
     });
   };
 
-  editEmp = id => {};
-  deleteEmp = id => {};
+  toggleUpdateEmp = empId => {
+    let emp = this.state.data.find(item => item.id === empId);
+    this.setState({
+      name: emp ? emp.name : "",
+      email: emp ? emp.email : "",
+      id: emp ? emp.id : "",
+      isUpdateEmployee: !this.state.isUpdateEmployee
+    });
+    this.props.clearError();
+  };
+
+  editEmp = id => {
+    this.toggleUpdateEmp(id);
+  };
+
+  updateEmp = () => {
+    const { name, email, id } = this.state;
+    let payload = {
+      name,
+      email,
+      id
+    };
+
+    this.props.updateEmployee(payload, () => {
+      this.toggleUpdateEmp();
+    });
+  };
+
+  toggleDeleteEmp = id => {
+    this.setState({
+      isDeleteEmployee: id ? true : false,
+      idToDelete: id
+    });
+
+    this.props.clearError();
+  };
+
+  deleteEmp = () => {
+    this.props.deleteEmp(this.state.idToDelete, () => {
+      this.toggleDeleteEmp();
+    });
+  };
 
   render() {
     return (
@@ -119,7 +167,12 @@ class EmployeeDashboard extends Component {
             <div className="model_panel">
               <div className="modelTitle">
                 Create Employee
-                <div className="model_close" onClick={!this.props.isAddingEmp ? this.toggleAddEmployee : () => {}}>
+                <div
+                  className="model_close"
+                  onClick={
+                    !this.props.isAddingEmp ? this.toggleAddEmployee : () => {}
+                  }
+                >
                   X
                 </div>
               </div>
@@ -141,16 +194,104 @@ class EmployeeDashboard extends Component {
                 />
                 <br />
                 <br />
-                {this.props.addError && <div>{this.props.addError}</div>}
+                <div className="error_msg">{this.props.addError}</div>
               </div>
               <div className="modelAction">
-                <div className={`btn ${this.props. isAddingEmp && "btn_disabled"}`} onClick={this.addEmployee} disabled>
+                <div
+                  className={`btn ${this.props.isAddingEmp && "btn_disabled"}`}
+                  onClick={this.props.isAddingEmp ? () => {} : this.addEmployee}
+                  disabled
+                >
                   CREATE
                 </div>
               </div>
             </div>
           </div>
         )}
+
+        {this.state.isUpdateEmployee && (
+          <div className="model_master">
+            <div className="model_panel">
+              <div className="modelTitle">
+                Update Employee
+                <div
+                  className="model_close"
+                  onClick={
+                    !this.props.isUpdatingEmp ? this.toggleUpdateEmp : () => {}
+                  }
+                >
+                  X
+                </div>
+              </div>
+
+              <div className="modelBody">
+                Name :{" "}
+                <input
+                  name="name"
+                  value={this.state.name}
+                  onChange={this.inputChange}
+                  disabled={this.props.isUpdatingEmp}
+                />
+                <br />
+                Email :{" "}
+                <input
+                  name="email"
+                  value={this.state.email}
+                  onChange={this.inputChange}
+                  disabled={this.props.isUpdatingEmp}
+                />
+                <br />
+                <br />
+                <div className="error_msg">{this.props.updateError}</div>
+              </div>
+              <div className="modelAction">
+                <div
+                  className={`btn ${this.props.isUpdatingEmp &&
+                    "btn_disabled"}`}
+                  onClick={this.props.isUpdatingEmp ? () => {} : this.updateEmp}
+                  disabled
+                >
+                  UPDATE
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {this.state.isDeleteEmployee && (
+          <div className="alert_master">
+            <div className="alert_inner">
+              <div className="alert_title">
+                Are you sure you?
+                <div className="error_msg">{this.props.deleteError}</div>
+              </div>
+
+              <div className="alert_button_zone">
+                <div
+                  className={`alert_btn ${this.props.isDeleteingEmp &&
+                    "alert_btn_disabled"}`}
+                  onClick={
+                    this.props.isDeleteingEmp ? () => {} : this.deleteEmp
+                  }
+                >
+                  Yes
+                </div>
+                <div
+                  className={`alert_btn ${this.props.isDeleteingEmp &&
+                    "alert_btn_disabled"}`}
+                  onClick={
+                    this.props.isDeleteingEmp
+                      ? () => {}
+                      : this.toggleDeleteEmp.bind(null, null)
+                  }
+                >
+                  No
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="emp_title">
           Employees
           <div>
@@ -185,7 +326,7 @@ class EmployeeDashboard extends Component {
           <EmployeeTable
             data={this.state.data}
             editEmp={this.editEmp}
-            deleteEmp={this.deleteEmp}
+            deleteEmp={this.toggleDeleteEmp}
           />
         )}
       </div>
@@ -200,11 +341,15 @@ const mapStateToPropds = state => {
     getError: state.getError,
     lastupdate: state.lastupdate,
     addError: state.addError,
-    isAddingEmp: state.isAddingEmp
+    isAddingEmp: state.isAddingEmp,
+    isUpdatingEmp: state.isUpdatingEmp,
+    updateError: state.updateError,
+    isDeleteingEmp: state.isDeleteingEmp,
+    deleteError: state.deleteError
   };
 };
 
 export default connect(
   mapStateToPropds,
-  { getEmployees, addEmployee, clearAddError }
+  { getEmployees, addEmployee, clearError, updateEmployee, deleteEmp }
 )(EmployeeDashboard);

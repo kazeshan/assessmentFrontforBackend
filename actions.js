@@ -8,9 +8,8 @@ export const getEmployees = () => {
 
     setTimeout(() => {
       axios
-        .get("employees")
+        .get("employee")
         .then(res => {
-          console.log(res);
           if (res.status === 200) {
             dispatch({
               type: "EMPLOYEES",
@@ -36,15 +35,14 @@ export const addEmployee = (payload, scall) => {
     });
 
     setTimeout(() => {
-      
       axios
-        .post(`employees`, payload)
+        .post(`employee`, payload)
         .then(res => {
           if (res.status === 200) {
-              dispatch({
-            type: "ADD_EMPLOYEE",
-            payload: res.data
-          });
+            dispatch({
+              type: "ADD_EMPLOYEE",
+              payload: res.data
+            });
             scall();
           }
         })
@@ -59,8 +57,65 @@ export const addEmployee = (payload, scall) => {
   };
 };
 
-export const clearAddError = () => {
+export const clearError = () => {
   return {
-    type: "CLEAR_ERROR_ADD_EMP"
+    type: "CLEAR_ERROR"
+  };
+};
+
+export const updateEmployee = (payload, scall) => {
+  return dispatch => {
+    dispatch({
+      type: "START_UPDATE_EMP"
+    });
+
+    setTimeout(() => {
+      axios
+        .patch(`employee`, payload)
+        .then(res => {
+          if (res.status === 200) {
+            dispatch({
+              type: "UPDATE_EMP",
+              payload: res.data
+            });
+            scall();
+          }
+        })
+        .catch(err => {
+          let msg = (err && err.message) || "unk";
+          dispatch({
+            type: "ERROR_UPDATE_EMP",
+            payload: msg
+          });
+        });
+    }, 2000);
+  };
+};
+
+export const deleteEmp = (id, scall) => {
+  return dispatch => {
+    dispatch({
+      type: "START_DELETE_EMP"
+    });
+    setTimeout(() => {
+      axios
+        .delete(`employee`, { data: { id } })
+        .then(res => {
+          if (res.status === 200) {
+            dispatch({
+              type: "DEELTE_EMP",
+              payload: id
+            });
+            scall();
+          }
+        })
+        .catch(err => {
+          let msg = (err && err.message) || "unk";
+          dispatch({
+            type: "ERROR_DELETE_EMP",
+            payload: msg
+          });
+        });
+    }, 2000);
   };
 };

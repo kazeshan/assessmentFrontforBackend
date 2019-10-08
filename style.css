@@ -36,3 +36,27 @@ h1, p {
 .btn_disabled:hover {
   background-color: transparent;
 }
+
+.alert_btn {
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 8px;
+  color: rgba(128,128,128,0.87);
+}
+
+.alert_btn:hover {
+  color: rgba(50,50,50,0.87);
+  background-color: rgba(120,120,120,0.8);
+}
+
+.alert_btn_disabled:hover {
+    color: rgba(128,128,128,0.87);
+    background-color: transparent;
+}
+
+.error_msg {
+  color : rgba(250,50,50,0.9);
+  font-size: 12px;
+}
