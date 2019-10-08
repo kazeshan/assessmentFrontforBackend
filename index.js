@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import Master from './containers/master'
+import Master from "./containers/master";
+import { Provider } from "react-redux";
+import store from "./store";
+
 import "./style.css";
 
 class App extends Component {
@@ -10,7 +13,9 @@ class App extends Component {
 
   render() {
     return (
-      <Master /> 
+      <Provider store={store}>
+        <Master />
+      </Provider>
     );
   }
 }
