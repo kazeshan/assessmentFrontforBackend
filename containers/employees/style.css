@@ -1,3 +1,39 @@
 .emp_master {
   width: 100%;
 }
+
+.emp_title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 24px;
+}
+
+.emp_options {
+  display: block;
+  font-size: 11px;
+  color: rgba(12,12,250,0.8);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.emp_options:hover {
+    color: rgba(12,12,250,0.9);
+}
+
+.emp_options_disabled {
+  color: rgba(120,120,120,1);
+  cursor: none;
+}
+
+.emp_options_disabled:hover {
+  color: rgba(120,120,120,1);
+}
+
+table {
+  width: 100%;
+  overflow: scroll;
+}
+
+td {
+  border : 1px solid black;
+}
