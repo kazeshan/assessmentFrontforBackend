@@ -20,8 +20,6 @@ export const getEmployees = () => {
           }
         })
         .catch(err => {
-          console.log("error");
-          console.log(err);
           let msg = err && err.message || "unk"
           dispatch({
             type: "GETTING_EMPLOYEES_ERROR",

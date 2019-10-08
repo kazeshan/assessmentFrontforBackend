@@ -8,23 +8,38 @@ const EmployeeTable = props => {
     return <div>There are no records.</div>;
   }
   return (
-    <table>
-      <tr>
-        <th>Empoyee Id</th>
-        <th>Name</th>
-        <th>Email</th>
-      </tr>
+    <table cellspacing={0}>
       <tbody>
-      {props.data.map((item, index) => {
-        console.log(item)
-        return (
-          <tr key={`row_${index}_${item.id}`}>
-            <td>{item.id}</td>
-            <td>{item.name}</td>
-            <td>{item.email}</td>
-          </tr>
-        );
-      })}
+        <tr>
+          <th>Empoyee Id</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th />
+        </tr>
+        {props.data.map((item, index) => {
+          console.log(item);
+          return (
+            <tr key={`row_${index}_${item.id}`}>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.email}</td>
+              <td>
+                <span
+                  className="table_edit"
+                  onClick={props.editEmp.bind(null, item.id)}
+                >
+                  EDIT
+                </span>
+                <span
+                  className="table_delete"
+                  onClick={props.deleteEmp.bind(null, item.id)}
+                >
+                  DELETE
+                </span>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -62,11 +77,14 @@ class EmployeeDashboard extends Component {
     });
   };
 
+  editEmp = () => {};
+  deleteEmp = () => {};
+
   render() {
     return (
       <div className="emp_master">
         <div className="emp_title">
-          Employee Dashboard
+          Employees
           <span
             className={`emp_options ${this.props.isGettingEmployees &&
               "emp_options_disabled"}`}
@@ -83,7 +101,11 @@ class EmployeeDashboard extends Component {
         ) : this.props.isGettingEmployees ? (
           "Loading Employees..."
         ) : (
-          <EmployeeTable data={this.state.data} />
+          <EmployeeTable
+            data={this.state.data}
+            editEmp={this.editEmp}
+            deleteEmp={this.deleteEmp}
+          />
         )}
       </div>
     );

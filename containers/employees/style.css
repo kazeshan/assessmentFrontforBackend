@@ -34,6 +34,34 @@ table {
   overflow: scroll;
 }
 
+th {
+  text-align: left;
+}
+
 td {
   border : 1px solid black;
+  padding: 4px 4px 4px 4px;
+}
+
+.table_edit {
+  font-size: 11px;
+  color: rgba(12,12,250,0.8);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.table_delete {
+  font-size: 11px;
+  color: rgba(250,12,12,0.8);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.table_edit:hover {
+  color: rgba(12,12,250,0.9);
+}
+
+.table_delete:hover {
+  color: rgba(250,12,12,0.9);
 }
