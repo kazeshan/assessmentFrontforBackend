@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { getEmployees } from "../../actions.js";
+import { getEmployees, addEmployee, clearAddError } from "../../actions.js";
 import "./style.css";
 
 const EmployeeTable = props => {
@@ -50,7 +50,11 @@ class EmployeeDashboard extends Component {
   }
 
   state = {
-    data: null
+    data: null,
+    name: "",
+    email: "",
+    id: "",
+    isCreateEmployee: false
   };
 
   componentDidMount() {
@@ -75,13 +79,78 @@ class EmployeeDashboard extends Component {
     });
   };
 
-  addEmployee = () => {};
+  toggleAddEmployee = () => {
+    this.setState({
+      name: "",
+      email: "",
+      id: "",
+      isCreateEmployee: !this.state.isCreateEmployee
+    });
+
+    this.props.clearAddError()
+  };
+
+  addEmployee = () => {
+    const { name, email } = this.state;
+    let payload = {
+      name,
+      email
+    };
+
+    this.props.addEmployee(payload, () => {
+      this.toggleAddEmployee()
+    });
+  };
+
+  inputChange = e => {
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  };
+
   editEmp = id => {};
   deleteEmp = id => {};
 
   render() {
     return (
       <div className="emp_master">
+        {this.state.isCreateEmployee && (
+          <div className="model_master">
+            <div className="model_panel">
+              <div className="modelTitle">
+                Create Employee
+                <div className="model_close" onClick={!this.props.isAddingEmp ? this.toggleAddEmployee : () => {}}>
+                  X
+                </div>
+              </div>
+              <div className="modelBody">
+                Name :{" "}
+                <input
+                  name="name"
+                  value={this.state.name}
+                  onChange={this.inputChange}
+                  disabled={this.props.isAddingEmp}
+                />
+                <br />
+                Email :{" "}
+                <input
+                  name="email"
+                  value={this.state.email}
+                  onChange={this.inputChange}
+                  disabled={this.props.isAddingEmp}
+                />
+                <br />
+                <br />
+                {this.props.addError && <div>{this.props.addError}</div>}
+              </div>
+              <div className="modelAction">
+                <div className={`btn ${this.props. isAddingEmp && "btn_disabled"}`} onClick={this.addEmployee} disabled>
+                  CREATE
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="emp_title">
           Employees
           <div>
@@ -98,7 +167,9 @@ class EmployeeDashboard extends Component {
               className={`emp_options ${this.props.isGettingEmployees &&
                 "emp_options_disabled"}`}
               onClick={
-                this.props.isGettingEmployees ? () => {} : this.addEmployee
+                this.props.isGettingEmployees
+                  ? () => {}
+                  : this.toggleAddEmployee
               }
             >
               Add New Employee
@@ -127,11 +198,13 @@ const mapStateToPropds = state => {
     employees: state.employees,
     isGettingEmployees: state.isGettingEmployees,
     getError: state.getError,
-    lastupdate: state.lastupdate
+    lastupdate: state.lastupdate,
+    addError: state.addError,
+    isAddingEmp: state.isAddingEmp
   };
 };
 
 export default connect(
   mapStateToPropds,
-  { getEmployees }
+  { getEmployees, addEmployee, clearAddError }
 )(EmployeeDashboard);

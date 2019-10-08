@@ -1,10 +1,12 @@
-import moment from 'moment'
+import moment from "moment";
 
 const initState = {
   employees: null,
-  lastupdate : 0,
+  lastupdate: 0,
   isGettingEmployees: false,
   getError: null,
+  isAddingEmp: false,
+  addError: null
 };
 
 const emp = (state = initState, action) => {
@@ -21,7 +23,7 @@ const emp = (state = initState, action) => {
         ...state,
         isGettingEmployees: false,
         employees: action.payload,
-        lastupdate : moment().valueOf(),
+        lastupdate: moment().valueOf()
       };
     }
     case "GETTING_EMPLOYEES_ERROR": {
@@ -29,6 +31,37 @@ const emp = (state = initState, action) => {
         ...state,
         isGettingEmployees: false,
         getError: action.payload
+      };
+    }
+
+    case "START_ADD_EMP": {
+      return {
+        ...state,
+        isAddingEmp: true,
+        addError: null
+      };
+    }
+
+    case "ADD_EMPLOYEE": {
+      return {
+        ...state,
+        isAddingEmp: false,
+        addError: null,
+        employees : state.employees ? [action.payload, ...state.employees] : [action.payload],
+        lastupdate : moment().valueOf()
+      };
+    }
+    case "ERROR_ADD_EMP": {
+      return {
+        ...state,
+        isAddingEmp: false,
+        addError: action.payload
+      };
+    }
+    case "CLEAR_ERROR_ADD_EMP": {
+      return {
+        ...state,
+        addError: null
       };
     }
     default: {
