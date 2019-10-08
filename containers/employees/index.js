@@ -8,7 +8,7 @@ const EmployeeTable = props => {
     return <div>There are no records.</div>;
   }
   return (
-    <table cellspacing={0}>
+    <table cellSpacing={0}>
       <tbody>
         <tr>
           <th>Empoyee Id</th>
@@ -17,7 +17,6 @@ const EmployeeTable = props => {
           <th />
         </tr>
         {props.data.map((item, index) => {
-          console.log(item);
           return (
             <tr key={`row_${index}_${item.id}`}>
               <td>{item.id}</td>
@@ -60,7 +59,6 @@ class EmployeeDashboard extends Component {
 
   shouldComponentUpdate(np, ns) {
     if (np.lastupdate !== this.props.lastupdate) {
-      console.log("change detected");
       this.processEmployee(np.employees);
       return false;
     }
@@ -77,23 +75,35 @@ class EmployeeDashboard extends Component {
     });
   };
 
-  editEmp = () => {};
-  deleteEmp = () => {};
+  addEmployee = () => {};
+  editEmp = id => {};
+  deleteEmp = id => {};
 
   render() {
     return (
       <div className="emp_master">
         <div className="emp_title">
           Employees
-          <span
-            className={`emp_options ${this.props.isGettingEmployees &&
-              "emp_options_disabled"}`}
-            onClick={
-              this.props.isGettingEmployees ? () => {} : this.getEmployees
-            }
-          >
-            Refresh
-          </span>
+          <div>
+            <span
+              className={`emp_options ${this.props.isGettingEmployees &&
+                "emp_options_disabled"}`}
+              onClick={
+                this.props.isGettingEmployees ? () => {} : this.getEmployees
+              }
+            >
+              Refresh Employee List
+            </span>
+            <span
+              className={`emp_options ${this.props.isGettingEmployees &&
+                "emp_options_disabled"}`}
+              onClick={
+                this.props.isGettingEmployees ? () => {} : this.addEmployee
+              }
+            >
+              Add New Employee
+            </span>
+          </div>
         </div>
 
         {this.props.getError ? (
